@@ -1,0 +1,38 @@
+;; shadow-cljs configuration
+{:source-paths
+ ["src"]
+
+ :dependencies [[reagent "1.0.0"]
+                [binaryage/devtools "1.0.2"]
+                [lilactown/helix "0.0.15"]
+                [cljs-http "0.1.46"]
+                [nubank/workspaces "1.0.15"]
+                [cider/cider-nrepl "0.25.5"]]
+
+ :dev-http {3100 "build/"
+            3101 "build-devcards/"}
+ :builds {:app {:output-dir "build/"
+                :asset-path "."
+                :target :browser
+                :modules {:main {:init-fn main.app/init}}
+                :devtools {:preloads [devtools.preload]}}
+
+          :workspaces {:target :browser
+                       :output-dir "build-workspaces/"
+                       :compiler-options {:output-feature-set :es6}
+                       :asset-path "."
+                       :devtools {:http-root "build-workspaces/"
+                                  :http-port          3600
+                                  :http-resource-root "."
+                                  :preloads []}
+                       :modules {:main {:entries [workspaces.main]}}}
+
+          :devcards {:output-dir "build-devcards/"
+                     :js-options {:resolve {"devcards-marked" {:target :npm :require "marked"}
+                                            "devcards-syntax-highlighter" {:target :npm :require "syntax-highlighter"}}}
+                     :asset-path "."
+                     :compiler-options {:devcards :true}
+                     :target :browser
+                     :modules {:main {:init-fn devcards.main/init :entries [devcards.main]}}
+                     :devtools {:after-load devcards.main/reload!
+                                :preloads [devtools.preload]}}}}
